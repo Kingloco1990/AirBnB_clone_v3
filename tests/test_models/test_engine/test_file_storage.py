@@ -156,25 +156,30 @@ class TestFileStorage(unittest.TestCase):
         # Save the current state of __objects
         save = FileStorage._FileStorage__objects.copy()
 
-        # Define a dictionary of state classes
-        state_classes = {
-            "State1": State,
-            "State2": State,
-            "State3": State,
-            "State4": State
-        }
+        # Clear the storage before testing
+        FileStorage._FileStorage__objects = {}
 
         # Add instances of each class to the storage
-        for cls in state_classes.values():
+        for cls in classes.values():
             instance = cls()
             storage.new(instance)
 
         # Count the number of objects currently stored in FileStorage
-        count_obj = len(FileStorage._FileStorage__objects)
+        total_objects = len(FileStorage._FileStorage__objects)
 
-        # Assert that the storage.count method returns the correct
-        # count for the selected class
-        self.assertEqual(storage.count(State), count_obj)
+        # Add instances of State class only to count
+        for _ in range(5):
+            instance = State()
+            storage.new(instance)
+
+        state_count = len([
+            obj for obj in FileStorage._FileStorage__objects.values()
+            if isinstance(obj, State)
+        ])
+
+        # Assert that the storage.count method returns the correct count
+        self.assertEqual(storage.count(State), state_count)
+        self.assertEqual(storage.count(), total_objects + state_count)
 
         # Restore the original state of __objects
         FileStorage._FileStorage__objects = save
