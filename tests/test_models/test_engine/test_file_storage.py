@@ -4,7 +4,7 @@ Contains the TestFileStorageDocs classes
 """
 import unittest
 import inspect
-import pycodestyle
+import pep8
 import json
 import models
 from models.engine import file_storage
@@ -50,14 +50,14 @@ class TestPep8Compliance(unittest.TestCase):
        conform to PEP 8.
     """
     def test_pep8_compliance_file_storage(self):
-        style = pycodestyle.StyleGuide(quiet=True)
+        style = pep8.StyleGuide(quiet=True)
         result = style.check_files(['models/engine/file_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          ("Found code style errors (and warnings). "
                           "Total erros: {}".format(result.total_errors)))
 
     def test_pep8_compliance_test_file_storage(self):
-        style = pycodestyle.StyleGuide(quiet=True)
+        style = pep8.StyleGuide(quiet=True)
         result = style.check_files(
             ['tests/test_models/test_engine/test_file_storage.py'])
         self.assertEqual(result.total_errors, 0,

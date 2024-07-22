@@ -7,7 +7,7 @@ adheres to the expected behaviors.
 
 import unittest
 import inspect
-import pycodestyle
+import pep8
 import models
 from models.engine import db_storage
 from models.engine.db_storage import DBStorage
@@ -44,14 +44,14 @@ class TestPep8Compliance(unittest.TestCase):
        conform to PEP 8.
     """
     def test_pep8_compliance_db_storage(self):
-        style = pycodestyle.StyleGuide(quiet=True)
+        style = pep8.StyleGuide(quiet=True)
         result = style.check_files(['models/engine/db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          ("Found code style errors (and warnings). "
                           "Total erros: {}".format(result.total_errors)))
 
     def test_pep8_compliance_test_db_storage(self):
-        style = pycodestyle.StyleGuide(quiet=True)
+        style = pep8.StyleGuide(quiet=True)
         result = style.check_files(
             ['tests/test_models/test_engine/test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
