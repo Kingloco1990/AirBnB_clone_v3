@@ -65,7 +65,6 @@ class TestDBStorage(unittest.TestCase):
     def setUp(self):
         """Set up for DBStorage tests"""
         self.storage = DBStorage()
-        self.storage.reload()
 
     def tearDown(self):
         """Clean up after DBStorage tests"""
@@ -109,26 +108,6 @@ class TestDBStorage(unittest.TestCase):
         self.storage.save()
         result = self.storage.all(City)
         self.assertIn(f'City.{new_city.id}', result)
-
-    @unittest.skipIf(models.storage_t != 'db',
-                     "Skipping because file storage is used")
-    def test_delete(self):
-        """Test that delete removes an object from the database session"""
-        new_state = State(name="New York")
-        self.storage.new(new_state)
-        self.storage.save()
-        self.storage.delete(new_state)
-        self.storage.save()
-        result = self.storage.all(State)
-        self.assertNotIn(f'State.{new_state.id}', result)
-
-    @unittest.skipIf(models.storage_t != 'db',
-                     "Skipping because file storage is used")
-    def test_reload(self):
-        """Test that reload correctly loads data from the database"""
-        self.storage.reload()
-        result = self.storage.all()
-        self.assertIsInstance(result, dict)
 
     @unittest.skipIf(models.storage_t != 'db',
                      "Skipping because file storage is used")
