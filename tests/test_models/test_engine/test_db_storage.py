@@ -35,7 +35,7 @@ class TestDBStorageDocs(unittest.TestCase):
         for name, method in inspect.getmembers(DBStorage,
                                                predicate=inspect.isfunction):
             self.assertIsNotNone(
-                method.__doc__, '{} method lacks a docstring'.format(name))
+                method.__doc__, f'{name} method lacks a docstring')
 
 
 class TestPep8Compliance(unittest.TestCase):
@@ -48,7 +48,7 @@ class TestPep8Compliance(unittest.TestCase):
         result = style.check_files(['models/engine/db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          ("Found code style errors (and warnings). "
-                          f"Total erros: {result.total_errors}"))
+                          "Total erros: {}".format(result.total_errors)))
 
     def test_pep8_compliance_test_db_storage(self):
         style = pycodestyle.StyleGuide(quiet=True)
@@ -56,7 +56,7 @@ class TestPep8Compliance(unittest.TestCase):
             ['tests/test_models/test_engine/test_db_storage.py'])
         self.assertEqual(result.total_errors, 0,
                          ("Found code style errors (and warnings). "
-                          f"Total erros: {result.total_errors}"))
+                          "Total erros: {}".format(result.total_errors)))
 
 
 class TestDBStorage(unittest.TestCase):
