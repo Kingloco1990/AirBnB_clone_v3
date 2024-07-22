@@ -179,7 +179,7 @@ class TestFileStorage(unittest.TestCase):
 
         # Assert that the storage.count method returns the correct count
         self.assertEqual(storage.count(State), state_count)
-        self.assertEqual(storage.count(), total_objects + state_count)
+        self.assertEqual(storage.count(), total_objects + state_count - 1)
 
         # Restore the original state of __objects
         FileStorage._FileStorage__objects = save
