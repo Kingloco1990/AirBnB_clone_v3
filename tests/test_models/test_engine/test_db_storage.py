@@ -35,7 +35,7 @@ class TestDBStorageDocs(unittest.TestCase):
         for name, method in inspect.getmembers(DBStorage,
                                                predicate=inspect.isfunction):
             self.assertIsNotNone(
-                method.__doc__, f'{name} method lacks a docstring')
+                method.__doc__, '{} method lacks a docstring'.format(name))
 
 
 class TestPep8Compliance(unittest.TestCase):
