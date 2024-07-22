@@ -138,7 +138,7 @@ class TestFileStorage(unittest.TestCase):
 
                 # Assert that the get method returns the correct instance
                 # based on its ID
-                self.assertEqual(storage.get(instance, obj_id), instance)
+                self.assertEqual(storage.get(cls, obj_id), instance)
 
         # Restore the original state of __objects
         FileStorage._FileStorage__objects = save
@@ -164,19 +164,17 @@ class TestFileStorage(unittest.TestCase):
             "State4": State
         }
 
-        # Select a specific class to count
-        obj_class = state_classes["State1"]
-
         # Add instances of each class to the storage
         for cls in state_classes.values():
-            storage.new(cls)
+            instance = cls()
+            storage.new(instance)
 
         # Count the number of objects currently stored in FileStorage
         count_obj = len(FileStorage._FileStorage__objects)
 
         # Assert that the storage.count method returns the correct
         # count for the selected class
-        self.assertEqual(storage.count(obj_class), count_obj)
+        self.assertEqual(storage.count(State), count_obj)
 
         # Restore the original state of __objects
         FileStorage._FileStorage__objects = save
