@@ -9,11 +9,14 @@ import unittest
 import inspect
 import pep8
 import models
+import os
 from models.engine import db_storage
 from models.engine.db_storage import DBStorage
 from models.city import City
 from models.state import State
 
+
+STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
 
 class TestDBStorageDocs(unittest.TestCase):
     """
@@ -61,24 +64,24 @@ class TestPep8Compliance(unittest.TestCase):
 
 class TestDBStorage(unittest.TestCase):
     """Test the DBStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(STORAGE_TYPE != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(STORAGE_TYPE != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(STORAGE_TYPE != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(STORAGE_TYPE != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
-    @unittest.skipIf(models.storage_t != 'db',
+    @unittest.skipIf(STORAGE_TYPE != 'db',
                      "Skipping because file storage is used")
     def test_get(self):
         """Test that get retrieves an object by class and ID"""
@@ -89,7 +92,7 @@ class TestDBStorage(unittest.TestCase):
         result = storage.get(State, new_state.id)
         self.assertEqual(result, new_state)
 
-    @unittest.skipIf(models.storage_t != 'db',
+    @unittest.skipIf(STORAGE_TYPE != 'db',
                      "Skipping because file storage is used")
     def test_count(self):
         """Test that count returns the correct number of objects"""
