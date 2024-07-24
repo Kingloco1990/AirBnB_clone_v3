@@ -18,6 +18,7 @@ from models.state import State
 
 STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
 
+
 class TestDBStorageDocs(unittest.TestCase):
     """
        Tests to check the documentation and style of db_storage module,
