@@ -21,6 +21,7 @@ DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
 
+
 class TestDBStorageDocs(unittest.TestCase):
     """
        Tests to check the documentation and style of db_storage module,
