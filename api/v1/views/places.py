@@ -12,8 +12,6 @@ from models.state import State
 from models.amenity import Amenity
 from api.v1.views import app_views
 
-STORAGE_TYPE = os.environ.get('HBNB_TYPE_STORAGE')
-
 
 @app_views.route('/cities/<city_id>/places', methods=['GET'],
                  strict_slashes=False)
@@ -101,8 +99,13 @@ def search_places():
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
 
+    if not states and not cities and not amenities:
+        # Retrieve all Place objects
+        places = storage.all(Place).values()
+        return jsonify([place.to_dict() for place in places])
+
     places = set()
-    
+
     # Retrieve Place objects based on states
     if states:
         for state_id in states:
@@ -110,24 +113,19 @@ def search_places():
             if state:
                 for city in state.cities:
                     places.update(city.places)
-    
+
     # Retrieve Place objects based on cities
     if cities:
         for city_id in cities:
             city = storage.get(City, city_id)
             if city:
                 places.update(city.places)
-    
+
     # Filter Place objects based on amenities
     if amenities:
-        amenities = set(amenities)  # Ensure uniqueness of amenities IDs
-        filtered_places = []
-        for place in places:
-            place_amenities = [amenity.id for amenity in place.amenities] if place.amenities else []
-            if all(amenity in place_amenities for amenity in amenities):
-                filtered_places.append(place)
-        places = filtered_places
-    
-    # Convert places to JSON format
-    result = [place.to_dict() for place in places]
-    return jsonify(result)
+        places = [
+            place for place in places
+            if all(amenity.id in place.amenity_ids
+                   for amenity in amenities)]
+
+    return jsonify([place.to_dict() for place in places])
