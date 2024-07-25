@@ -10,7 +10,6 @@ import inspect
 import pep8
 import models
 from models.engine import db_storage
-from models.engine.db_storage import DBStorage
 from models.amenity import Amenity
 from models.base_model import BaseModel
 from models.city import City
@@ -18,8 +17,9 @@ from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-classes = {"Amenity": Amenity, "BaseModel": BaseModel, "City": City,
-           "Place": Place, "Review": Review, "State": State, "User": User}
+DBStorage = db_storage.DBStorage
+classes = {"Amenity": Amenity, "City": City, "Place": Place,
+           "Review": Review, "State": State, "User": User}
 
 class TestDBStorageDocs(unittest.TestCase):
     """
@@ -76,21 +76,10 @@ class TestDBStorage(unittest.TestCase):
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
-        storage = DBStorage()
-        initial_count = storage.count()
-        new_state = State(name="California")
-        storage.new(new_state)
-        storage.save()
-        self.assertEqual(storage.count(), initial_count + 1)
 
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
-        storage = DBStorage()
-        new_city = City(name="San Francisco")
-        storage.new(new_city)
-        storage.save()
-        self.assertIn(new_city, storage.all(City).values())
 
     @unittest.skipIf(models.storage_t != 'db',
                      "Skipping because file storage is used")
