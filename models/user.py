@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """ holds class User"""
 import models
-from models.base_model import BaseModel, Base
+from models.base_model import BaseModel, Base, hash_password
 from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String
@@ -27,3 +27,15 @@ class User(BaseModel, Base):
     def __init__(self, *args, **kwargs):
         """initializes user"""
         super().__init__(*args, **kwargs)
+        if 'password' in kwargs:
+            self.password = kwargs['password']
+
+    @property
+    def password(self):
+        """Getter for password"""
+        return self.__password
+
+    @password.setter
+    def password(self, value):
+        """Setter for password, hashes it before saving"""
+        self.__password = hash_password(value)
