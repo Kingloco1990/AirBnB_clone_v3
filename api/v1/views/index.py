@@ -7,13 +7,13 @@ from api.v1.views import app_views
 from models import storage
 
 
-@app_views.route('/status', methods=['GET'])
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
 def status():
     """Returns the status of the API"""
     return jsonify({"status": "OK"})
 
 
-@app_views.route('/api/v1/stats', methods=['GET'])
+@app_views.route('/api/v1/stats', methods=['GET'], strict_slashes=False)
 def get_stats():
     """Retrieves the number of each objects by type."""
     stats = {
