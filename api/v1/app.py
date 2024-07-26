@@ -1,6 +1,18 @@
 #!/usr/bin/python3
 """
-Flask application setup
+Flask Application Setup
+
+This module sets up and configures a Flask application with the following
+features:
+- Registers a Flask blueprint (`app_views`) for API routes.
+- Configures Cross-Origin Resource Sharing (CORS) to allow requests
+  from all origins.
+- Defines a teardown function to close the database storage when the
+  application context ends.
+- Provides a custom error handler for 404 errors, returning a
+  JSON response with an error message.
+- Reads the host and port for the application from environment variables,
+  defaulting to '0.0.0.0' and '5000', respectively.
 """
 import os
 from flask import Flask, jsonify
