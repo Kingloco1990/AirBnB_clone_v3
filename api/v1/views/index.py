@@ -1,6 +1,12 @@
 #!/usr/bin/python3
 """
-Index route for API
+API Index Routes
+
+This module defines the index routes for the API, including:
+- `/status`: Returns the status of the API with a JSON response
+  indicating "OK".
+- `/stats`: Retrieves and returns the number of objects of each type
+  (Amenity, City, Place, Review, State, User) in the database.
 """
 from flask import jsonify
 from api.v1.views import app_views
@@ -15,7 +21,7 @@ def status():
 
 @app_views.route('/stats', methods=['GET'], strict_slashes=False)
 def get_stats():
-    """Retrieves the number of each objects by type."""
+    """Retrieves the number of each objects by type"""
     stats = {
         "amenities": storage.count("Amenity"),
         "cities": storage.count("City"),
