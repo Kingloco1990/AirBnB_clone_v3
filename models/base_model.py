@@ -10,7 +10,6 @@ import sqlalchemy
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 import uuid
-import hashlib
 
 time = "%Y-%m-%dT%H:%M:%S.%f"
 
@@ -18,13 +17,6 @@ if models.storage_t == "db":
     Base = declarative_base()
 else:
     Base = object
-
-
-def hash_password(password):
-    """Hash a password using MD5"""
-    md5 = hashlib.md5()
-    md5.update(password.encode('utf-8'))
-    return md5.hexdigest()
 
 
 class BaseModel:
