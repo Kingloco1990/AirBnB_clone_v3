@@ -2,12 +2,17 @@
 """ holds class User"""
 import hashlib
 import models
-from models.base_model import BaseModel, Base, hash_password
+from models.base_model import BaseModel, Base
 from os import getenv
 import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
+def hash_password(password):
+    """Hash a password using MD5"""
+    md5 = hashlib.md5()
+    md5.update(password.encode('utf-8'))
+    return md5.hexdigest()
 
 class User(BaseModel, Base):
     """Representation of a user """
@@ -27,17 +32,16 @@ class User(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
-        if kwargs:
-            pwd = kwargs.pop('password', None)
-            if pwd:
-                User.__set_password(self, pwd)
         super().__init__(*args, **kwargs)
+        if 'password' in kwargs:
+            self.password = kwargs['password']
 
-    def __set_password(self, pwd):
-        """
-            custom setter: encrypts password to MD5
-        """
-        secure = hashlib.md5()
-        secure.update(pwd.encode("utf-8"))
-        secure_password = secure.hexdigest()
-        setattr(self, "password", secure_password)
+    @property
+    def password(self):
+        """Getter for password"""
+        return self.__password
+
+    @password.setter
+    def password(self, value):
+        """Setter for password, hashes it before saving"""
+        self.__password = hash_password(value)
