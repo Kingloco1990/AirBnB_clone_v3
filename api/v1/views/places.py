@@ -72,60 +72,42 @@ def create_place(city_id):
     return jsonify(place.to_dict()), 201
 
 
-@app_views.route('/places/<place_id>', methods=['PUT'], strict_slashes=False)
-def update_place(place_id):
-    """Update a Place object"""
-    place = storage.get(Place, place_id)
-    if place is None:
-        abort(404)
-    if not request.is_json:
-        abort(400, description="Not a JSON")
-    data = request.get_json()
-    for key, value in data.items():
-        if key not in ['id', 'user_id', 'city_id', 'created_at', 'updated_at']:
-            setattr(place, key, value)
-    storage.save()
-    return jsonify(place.to_dict())
-
-
 @app_views.route('/places_search', methods=['POST'], strict_slashes=False)
 def search_places():
-    """Retrieve Place objects based on search criteria"""
+    """Search for Place objects based on criteria"""
     if not request.is_json:
         abort(400, description="Not a JSON")
 
     data = request.get_json()
+
     states = data.get('states', [])
     cities = data.get('cities', [])
     amenities = data.get('amenities', [])
 
-    if not states and not cities and not amenities:
-        # Retrieve all Place objects
-        places = storage.all(Place).values()
-        return jsonify([place.to_dict() for place in places])
+    all_places = storage.all(Place).values()
+    filtered_places = set()
 
-    places = set()
+    # Filter by states and cities
+    if states or cities:
+        city_ids = set()
+        if states:
+            for state_id in states:
+                state = storage.get(State, state_id)
+                if state:
+                    for city in state.cities:
+                        city_ids.add(city.id)
 
-    # Retrieve Place objects based on states
-    if states:
-        for state_id in states:
-            state = storage.get(State, state_id)
-            if state:
-                for city in state.cities:
-                    places.update(city.places)
+        if cities:
+            city_ids.update(cities)
 
-    # Retrieve Place objects based on cities
-    if cities:
-        for city_id in cities:
-            city = storage.get(City, city_id)
-            if city:
-                places.update(city.places)
+        for place in all_places:
+            if place.city_id in city_ids:
+                filtered_places.add(place)
 
-    # Filter Place objects based on amenities
+    # Filter by amenities
     if amenities:
-        places = [
-            place for place in places
-            if all(amenity.id in place.amenity_ids
-                   for amenity in amenities)]
+        filtered_places = {place for place in filtered_places if all(
+            amenity.id in [a.id for a in place.amenities]
+            for amenity in amenities)}
 
-    return jsonify([place.to_dict() for place in places])
+    return jsonify([place.to_dict() for place in filtered_places])
