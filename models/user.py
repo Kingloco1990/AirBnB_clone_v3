@@ -8,11 +8,13 @@ import sqlalchemy
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
+
 def hash_password(password):
     """Hash a password using MD5"""
     md5 = hashlib.md5()
     md5.update(password.encode('utf-8'))
     return md5.hexdigest()
+
 
 class User(BaseModel, Base):
     """Representation of a user """
