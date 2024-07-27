@@ -9,13 +9,6 @@ from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
 
-def hash_password(password):
-    """Hash a password using MD5"""
-    md5 = hashlib.md5()
-    md5.update(password.encode('utf-8'))
-    return md5.hexdigest()
-
-
 class User(BaseModel, Base):
     """Representation of a user """
     if models.storage_t == 'db':
@@ -34,16 +27,15 @@ class User(BaseModel, Base):
 
     def __init__(self, *args, **kwargs):
         """initializes user"""
+        if kwargs:
+            pwd = kwargs.pop('password', None)
+            if pwd:
+                User.__hash_password(self, pwd)
         super().__init__(*args, **kwargs)
-        if 'password' in kwargs:
-            self.password = kwargs['password']
 
-    @property
-    def password(self):
-        """Getter for password"""
-        return self.__password
-
-    @password.setter
-    def password(self, value):
-        """Setter for password, hashes it before saving"""
-        self.__password = hash_password(value)
+    def __hash_password(self, pwd):
+        """Hash a password using MD5"""
+        md5 = hashlib.md5()
+        md5.update(pwd.encode('utf-8'))
+        secure_password = md5.hexdigest()
+        setattr(self, "password", secure_password)
