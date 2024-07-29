@@ -24,6 +24,9 @@ DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
            "Review": Review, "State": State, "User": User}
 
+# Ensure storage type is set to 'db'
+models.storage_t = 'db'
+
 
 class TestDBStorageDocs(unittest.TestCase):
     """
