@@ -88,31 +88,50 @@ class TestDBStorage(unittest.TestCase):
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
-    @unittest.skipIf(models.storage_t != 'db',
-                     "Skipping because file storage is used")
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_get(self):
         """Test that get retrieves an object by class and ID"""
         storage = DBStorage()
-        save = DBStorage._DBStorage__session.copy()
-        DBStorage._DBStorage__session = {}
-        new_state = State(name="Florida")
+        storage.reload()
+
+        # Create new state and add it to storage
+        new_state = State(name="California")
         storage.new(new_state)
         storage.save()
-        result = storage.get(State, new_state.id)
-        self.assertEqual(result, new_state)
-        DBStorage._DBStorage__session = save
 
-    @unittest.skipIf(models.storage_t != 'db',
-                     "Skipping because file storage is used")
+        # Retrieve object by class and ID
+        result = storage.get(State, new_state.id)
+        self.assertIsNotNone(result)
+        self.assertEqual(result.id, new_state.id)
+        self.assertEqual(result.name, "California")
+
+        # Clean up
+        storage.delete(result)
+        storage.save()
+
+    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_count(self):
         """Test that count returns the correct number of objects"""
         storage = DBStorage()
-        save = DBStorage._DBStorage__session.copy()
-        DBStorage._DBStorage__session = {}
+        storage.reload()
+
+        # Save initial count
         initial_count = storage.count()
+        initial_state_count = storage.count(State)
+
+        # Create new state and add it to storage
         new_state = State(name="Texas")
         storage.new(new_state)
         storage.save()
+
+        # Test count after adding new state
         self.assertEqual(storage.count(), initial_count + 1)
-        self.assertEqual(storage.count(State), 1)
-        DBStorage._DBStorage__session = save
+        self.assertEqual(storage.count(State), initial_state_count + 1)
+
+        # Clean up
+        storage.delete(new_state)
+        storage.save()
+
+        # Test count after deleting the new state
+        self.assertEqual(storage.count(), initial_count)
+        self.assertEqual(storage.count(State), initial_state_count)
