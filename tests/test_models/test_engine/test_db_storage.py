@@ -27,6 +27,7 @@ classes = {"Amenity": Amenity, "City": City, "Place": Place,
 
 if os.getenv('HBNB_TYPE_STORAGE') != 'db':
     os.environ['HBNB_TYPE_STORAGE'] = 'db'
+    storage_type = os.getenv('HBNB_TYPE_STORAGE')
 
 
 class TestDBStorageDocs(unittest.TestCase):
@@ -75,24 +76,24 @@ class TestPep8Compliance(unittest.TestCase):
 
 class TestDBStorage(unittest.TestCase):
     """Test the DBStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(storage_type != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(storage_type != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(storage_type != 'db', "not testing db storage")
     def test_new(self):
         """Test that new adds an object to the database"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(storage_type != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(storage_type != 'db', "not testing db storage")
     def test_get(self):
         """Test that get retrieves an object by class and ID"""
         storage = DBStorage()
@@ -113,7 +114,7 @@ class TestDBStorage(unittest.TestCase):
         storage.delete(result)
         storage.save()
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(storage_type != 'db', "not testing db storage")
     def test_count(self):
         """Test that count returns the correct number of objects"""
         storage = DBStorage()
