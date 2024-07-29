@@ -26,16 +26,16 @@ class User(BaseModel, Base):
         last_name = ""
 
     def __init__(self, *args, **kwargs):
-        """initializes user"""
-        if kwargs:
-            pwd = kwargs.pop('password', None)
-            if pwd:
-                User.__hash_password(self, pwd)
+        """Initializes user"""
+        password = kwargs.pop('password', None)
         super().__init__(*args, **kwargs)
+        if password:
+            self.password = self.__hash_password(password)
+        elif not hasattr(self, 'password'):
+            self.password = ""
 
     def __hash_password(self, pwd):
         """Hash a password using MD5"""
         md5 = hashlib.md5()
         md5.update(pwd.encode('utf-8'))
-        secure_password = md5.hexdigest()
-        setattr(self, "password", secure_password)
+        return md5.hexdigest()
