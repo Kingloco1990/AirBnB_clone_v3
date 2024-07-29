@@ -71,6 +71,21 @@ class TestPep8Compliance(unittest.TestCase):
 
 class TestDBStorage(unittest.TestCase):
     """Test the DBStorage class"""
+
+    def setUp(self):
+        """Setup for each test case"""
+        self.storage = DBStorage()
+        self.storage.reload()
+
+    def tearDown(self):
+        """Teardown for each test case"""
+        # Clean up the database by removing added states
+        states = self.storage.all(State).values()
+        for state in states:
+            self.storage.delete(state)
+        self.storage.save()
+        self.storage.close()
+
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
@@ -92,23 +107,20 @@ class TestDBStorage(unittest.TestCase):
                      "Skipping because file storage is used")
     def test_get(self):
         """Test that get retrieves an object by class and ID"""
-        storage = DBStorage()
         new_state = State(name="Florida")
-        storage.new(new_state)
-        storage.save()
-        result = storage.get(State, new_state.id)
+        self.storage.new(new_state)
+        self.storage.save()
+        result = self.storage.get(State, new_state.id)
         self.assertEqual(result, new_state)
-        storage.close()
+        self.assertEqual(result.name, "Florida")
 
     @unittest.skipIf(models.storage_t != 'db',
                      "Skipping because file storage is used")
     def test_count(self):
         """Test that count returns the correct number of objects"""
-        storage = DBStorage()
-        initial_count = storage.count()
+        initial_count = self.storage.count()
         new_state = State(name="Texas")
-        storage.new(new_state)
-        storage.save()
-        self.assertEqual(storage.count(), initial_count + 1)
-        self.assertEqual(storage.count(State), 1)
-        storage.close()
+        self.storage.new(new_state)
+        self.storage.save()
+        self.assertEqual(self.storage.count(), initial_count + 1)
+        self.assertEqual(self.storage.count(State), 1)
